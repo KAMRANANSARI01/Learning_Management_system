@@ -55,18 +55,22 @@ userSchema.pre('save',async function(next){
 })
 
 //for generation token
-userSchema.methods={
-    generateJWTToken : async function(){
+userSchema.methods = {
+    generateJWTToken: async function () {
         return await jwt.sign(
             {
-            id:this._id, email:this.email, subscription:this.subscription, role:this.role
-        },
-        process.env.JWT_SECRET,
-        {
-            expiresIN : '24h'
-        }
+                id: this._id, email: this.email, subscription: this.subscription, role: this.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: '24h'
+            }
         )
+    },
+    comparePassword : async function(plainTextPassword){
+        return await bcrypt.compare(plainTextPassword,this.password)
     }
 }
+
 const User = model('User',userSchema)
 export default User;

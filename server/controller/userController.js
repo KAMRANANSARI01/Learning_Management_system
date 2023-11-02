@@ -57,7 +57,7 @@ const register = async(req,res,next)=>{
 
 
 //for login
-const login = async(req,res)=>{
+const login = async(req,res,next)=>{
     try {
         const{email,password} = req.body;
 
@@ -88,9 +88,12 @@ const login = async(req,res)=>{
     }
 
 }
+
+// for logout
 const logout = async(req,res)=>{
     // const{fullName,email,password} = req.body;
 }
+//for getProfile
 const getProfile = async(req,res)=>{
     // const{fullName,email,password} = req.body;
 }
