@@ -1,0 +1,72 @@
+import { Schema,model} from "mongoose";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken"
+
+const userSchema = new Schema({
+    fullName:{
+        type:"String",
+        maxLength:[20 , "name must be less than 20 char."],
+        required:[true , "name is required"],
+        minLength:[4 , "name must be greater than 4 char."],
+        trim:true,
+        lowercase:true
+
+    },
+    email:{
+        type:"String",
+        required:[true , "email is required"],
+        trim:true,
+        lowercase:true,
+        match:[/[^\s@]+@[^\s@]+\.[^\s@]+/,"please enter a valid email"]
+
+    },
+    password:{
+        type:"String",
+        required:[true , "email is required"],
+        minLength:[6 , "password must be contain atleast 6 char."],
+        select:false
+    },
+    avatar:{
+        public_id:{
+            type:"String"
+        },
+        secure_url:{
+            type:"String"
+        }
+    },
+    //here are making this schema for role as a student or a admin
+    role:{
+      type:"String",
+      enum :['USER','ADMIN'],
+      default:'USER'
+    },
+    forgotPasswordToken: String,    
+    forgotPasswordExpiry: Date
+
+}, {
+    timestamps: true
+})
+//for password encription
+userSchema.pre('save',async function(next){
+    if(!this.isModified('password')){
+        return next()
+    }
+    this.password = await bcrypt.hash(this.password, 10)
+})
+
+//for generation token
+userSchema.methods={
+    generateJWTToken : async function(){
+        return await jwt.sign(
+            {
+            id:this._id, email:this.email, subscription:this.subscription, role:this.role
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIN : '24h'
+        }
+        )
+    }
+}
+const User = model('User',userSchema)
+export default User;
