@@ -91,13 +91,40 @@ const login = async(req,res,next)=>{
 
 // for logout
 const logout = async(req,res)=>{
-    // const{fullName,email,password} = req.body;
+    try {
+        await res.cookie("token",null,{
+            secure:true,
+            httpOnly:true,
+            maxAge:0
+        }) 
+
+        res.status(200).json({
+            success:ture,
+            message:"User loggedout successfully"
+        })
+    } catch (error) {
+        console.log(error)
+       return  next(new AppError(error.message,400))
+    }
+   
 }
 //for getProfile
 const getProfile = async(req,res)=>{
-    // const{fullName,email,password} = req.body;
-}
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId);
 
+        res.status(200).json({
+            success:true,
+            message:"fetched user's data",
+            user
+        })
+    } catch (error) {
+        return  next(new AppError("failed to fetch user profile",500))
+
+    }
+  
+}
 
 export {
     register,
