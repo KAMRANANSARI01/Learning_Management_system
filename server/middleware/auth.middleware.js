@@ -10,8 +10,10 @@ const isLoggedIn = async(req,res,next)=>{
       }
 
       const userDetails = await jwt.verify(token,process.env.JWT_SECRET)//if token is available then we'll get details from jwt.verify
+      console.log(userDetails)
       req.user = userDetails
       next()
+
 }
 
 export{

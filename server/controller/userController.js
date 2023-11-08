@@ -1,10 +1,12 @@
+import { json } from "express";
 import User from "../models/userSchema.js";
 import AppError from "../utils/error.utils.js";
-
+import cloudinary from "cloudinary"
+import fs from 'fs/promises'
 
 //common cookieOptions
 const cookieOptions = {
-    maxAge:7*24*60*60*100 ,//7days
+    maxAge:7*24*60*60*1000 ,//7days
     httpOnly:true,
     secure:true
 }
@@ -37,7 +39,33 @@ const register = async(req,res,next)=>{
     if(!user){
         return next(new AppError("user registration failed, please try again"),400)
     }
-  //TODO:File upload
+
+
+  //File uploading
+
+  //here we get the converted profile pic file in req.file then we will save it into cloudinary.
+  console.log('FILE DETAILS >', JSON.stringify(req.file))
+
+if(req.file){
+   try {
+    const result = await cloudinary.v2.uploader.upload(req.file.path,{
+        folder :'lms',
+        height : 250,
+        width : 250,
+        gravity : 'faces',
+        crop:'fill'
+    })
+     if (result){
+        user.avatar.public_id = result.public_id,
+        user.avatar.secure_url = result.secure_url
+     }
+
+     //remove file from server(uploads folder)
+     fs.rm(`uploads/${req.file.filename}`)
+   } catch (error) {
+           return next(new AppError(error.message,503))
+   }
+}
 
   await user.save()
 
@@ -83,7 +111,7 @@ const login = async(req,res,next)=>{
           user
         })
     } catch (error) {
-        return next(new AppError(error.message, 400)) 
+        return next(new AppError(error.message, 500)) 
 
     }
 
