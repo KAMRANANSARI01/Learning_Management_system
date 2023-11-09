@@ -5,10 +5,10 @@ import cloudinary from "cloudinary"
 import fs from 'fs/promises'
 
 //common cookieOptions
-const cookieOptions = {
-    maxAge:7*24*60*60*1000 ,//7days
-    httpOnly:true,
-    secure:true
+const cookieOption = {
+    maxAge:24*60*60*1000 ,
+    // httpOnly:true,
+    // secure:true
 }
 //for user registration 
 const register = async(req,res,next)=>{
@@ -74,7 +74,7 @@ if(req.file){
   const token = await user.generateJWTToken()//this function defined in userschema.js
  //after password encription we do not want to share 
  user.password = undefined;
-  res.cookie('token',token, cookieOptions)
+  res.cookie('token',token, cookieOption)
 
   res.status(201).json({
     sucess:true,
@@ -103,7 +103,7 @@ const login = async(req,res,next)=>{
         const token = await user.generateJWTToken()//this function defined in userschema.js
     //after password encription we do not want to share 
        user.password = undefined;
-        res.cookie('token',token, cookieOptions)
+        res.cookie('token',token, cookieOption)
       
         res.status(201).json({
           sucess:true,
