@@ -16,6 +16,18 @@ const isLoggedIn = async(req,res,next)=>{
 
 }
 
+
+//for authorization that this is user or admin
+const authorizedRole = (...roles) =>async(req,res,next) =>{
+    const currentRole = await req.user.role;//here we can get error from jwt token we difined
+    if(!roles.includes(currentRole)){
+      return next(new AppError("you do not have access to view this route."),403)
+    }
+    next()
+}
+
+
 export{
-    isLoggedIn
+    isLoggedIn,
+    authorizedRole
 }

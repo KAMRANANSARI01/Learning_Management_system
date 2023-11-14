@@ -16,10 +16,10 @@ const cookieOption = {
 //***********for user registration***************//
 const register = async (req, res, next) => {
   console.log(req.body);
-  const { fullName, email, password } = req.body;
+  const { fullName, email, password} = req.body;
 
   //adding some validations
-  if (!fullName || !email || !password) {
+  if (!fullName || !email || !password || !role) {
     return next(new AppError("All fields are required", 400));
   }
   //checking that user is already exist or not
@@ -36,7 +36,8 @@ const register = async (req, res, next) => {
       public_id: email,
       secure_url:
         "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pngegg.com%2Fen%2Fsearch%3Fq%3Davatars&psig=AOvVaw1Ep2HrPQJQBpISDmhIq5_Y&ust=1698941282388000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCMi5xM-Xo4IDFQAAAAAdAAAAABAE",
-    },
+    }
+    
   });
 
   if (!user) {
@@ -118,7 +119,7 @@ const login = async (req, res, next) => {
 };
 
 //***************for logout************//
-const logout = async (req, res) => {
+const logout = async (req, res ,next) => {
   try {
     await res.cookie("token", null, {
       secure: true,
@@ -127,7 +128,7 @@ const logout = async (req, res) => {
     });
 
     res.status(200).json({
-      success: ture,
+      success: true,
       message: "User loggedout successfully",
     });
   } catch (error) {
