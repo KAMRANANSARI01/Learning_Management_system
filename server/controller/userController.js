@@ -75,7 +75,7 @@ const register = async (req, res, next) => {
 
   await user.save();
 
-  //when user registered successfully after that we want to save their info in cookie.
+  //when user registered successfully after that we want to save their info in cookie sothat after register user logged in automatically.
   const token = await user.generateJWTToken(); //this function defined in userschema.js
   //after password encription we do not want to share
   user.password = undefined;
@@ -138,7 +138,7 @@ const logout = async (req, res ,next) => {
 };
 
 //*************for getProfile**********//
-const getProfile = async (req, res) => {
+const getProfile = async (req, res ,next) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -246,7 +246,7 @@ const changePassword = async function (req, res, next) {
     return next(new AppError("user does not exist", 400));
   }
 
-  //in case if user exist then we compare the old password that is filled by the user in req.body to the user's old password that is saved in db
+  //in case if user exist then we compare the old password that is filled by the user in req.body to the user's password that is saved in db
   const isPasswordValid = await user.comparePassword(oldPassword); //comparePassword id defined in userSchema
   //old password is not valid then
   if (!isPasswordValid) {
@@ -316,7 +316,6 @@ const updateProfile = async function (req, res, next) {
     message: "User profile updated successfully",
   });
 };
-//love is effort it is not ease but it is not quite as complicated as they want you to believe
 export {
   register,
   login,

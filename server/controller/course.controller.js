@@ -176,7 +176,7 @@ const addLecturesToCourseById = async (req, res, next) => {
     const lectureData = {
       title,
       description,
-      lecture : {}
+      lecture: {},
     };
 
     //for img/video upload
@@ -197,19 +197,43 @@ const addLecturesToCourseById = async (req, res, next) => {
         console.log(error);
         return next(new AppError("error.message", 403));
       }
-
-      course.lectures.push(lectureData);
-
-      course.numbersOfLectures = course.lectures.length;
-
-      await course.save();
-
-      res.status(200).json({
-        success : true,
-        message : "lectures added successfully",
-        course
-      })
     }
+
+    course.lectures.push(lectureData);
+
+    course.numbersOfLectures = course.lectures.length;
+
+    await course.save();
+
+    res.status(200).json({
+      success: true,
+      message: "lectures added successfully",
+      course,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(new AppError("error.message", 403));
+  }
+};
+
+//*************removing lectures in course by admin*******************//
+
+const removeCourseLecture = async (req, res, next) => {
+  try {
+    const {id} = req.params;
+    const course = await Course.findById(id);
+    if (!course) {
+      return next(new AppError("course not found related to this id", 403));
+    }
+    lectureId = await course.lectures.id;
+    await Course.findByIdAndDelete(lectureId)
+
+    await course.save()
+    res.status(200).json({
+      success: true,
+      message: "lectures deleted successfully",
+      course,
+    });
   } catch (error) {
     console.log(error);
     return next(new AppError("error.message", 403));
@@ -223,4 +247,5 @@ export {
   updateCourse,
   removeCourse,
   addLecturesToCourseById,
+  removeCourseLecture,
 };

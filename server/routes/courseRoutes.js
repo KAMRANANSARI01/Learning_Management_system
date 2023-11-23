@@ -5,6 +5,7 @@ import {
   getAllCourses,
   getLecturesByCourseId,
   removeCourse,
+  removeCourseLecture,
   updateCourse,
 } from "../controller/course.controller.js";
 import { authorizedRole, isLoggedIn } from "../middleware/auth.middleware.js";
@@ -32,6 +33,7 @@ router
     authorizedRole("ADMIN"),
     upload.single("lecture"),
     addLecturesToCourseById
-  ); //for adding lectures in course by admin
+  ) //for adding lectures in course by admin
+  .delete(isLoggedIn,authorizedRole("ADMIN"),removeCourseLecture)//now this is not working have to fix it.
 
 export default router;

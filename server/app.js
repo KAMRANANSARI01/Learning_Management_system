@@ -5,6 +5,7 @@ import { config } from "dotenv";
 import morgan from "morgan";
 import userRoutes from "./routes/userRoutes.js"
 import courseRoutes from './routes/courseRoutes.js'
+import paymentRoutes from './routes/paymentRoutes.js'
 import errorMiddleware from "./middleware/error.middleware.js";
 config();
 const app = express();
@@ -18,6 +19,7 @@ app.use(cookieParser())
 app.use(morgan('dev'))
 app.use("/api/v1/user",userRoutes)//for user homePage
 app.use("/api/v1/course",courseRoutes)//for course homepage
+app.use("/api/v1/payment",paymentRoutes)
 app.use("/",(req,res)=>{
     res.send("hello world")
 })
