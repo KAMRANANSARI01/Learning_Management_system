@@ -1,5 +1,6 @@
 body {
   margin: auto;
-  max-width:1440px;
+  /* max-width:1440px; */
   position: relative;
+  background-color:rgb(55 65 81);
 }
