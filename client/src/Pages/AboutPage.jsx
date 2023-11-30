@@ -1,13 +1,17 @@
 import React from "react";
+
 import HomeLayout from "../Layouts/HomeLayout";
-import mainImg  from "../assets/aboutMainImage.png";
+import CarouselSlide from "../Component/carouselSlide";
+import { celebradtyData } from "../Constant/CelebratyData";
+
+import mainImg from "../assets/aboutMainImage.png";
 
 const AboutPage = () => {
   return (
     <HomeLayout>
-      <div className="flex flex-col bg-red-600 h-[90vh] w-[100%] sm:pl-20 sm:pt-20 text-white ">
-        <div className="flex  items-center justify-around gap-5 m-10">
-          <section className=" w-[50%] h-[50%] bg-slate-500 space-y-12 ">
+      <div className="flex flex-col h-[90vh] w-[100%] sm:pl-20 sm:pt-20 text-white ">
+        <div className="flex h-[50%] items-center justify-around gap-5 m-10">
+          <section className=" w-[40%] h-[100%] flex items-center flex-col justify-center space-y-12 ">
             <h1 className=" text-5xl font-semibold text-yellow-500">
               Affordable and quality education
             </h1>
@@ -19,19 +23,29 @@ const AboutPage = () => {
               mankind.
             </p>
           </section>
-          <section className="w-[1/2] bg-slate-400">
+          <section className="w-[40%] h-[100%]  flex items-center flex-col justify-center">
             <img
               id="test1"
               style={{
                 filter: "drop-shadow(0px 10px 10px rgb(0,0,0)) ",
               }}
-              className="drop-shadow-2xl"
+              className="drop-shadow-2xl h-[100%]"
               src={mainImg}
               alt="img"
             />
           </section>
         </div>
-
+        {/* //adding carousel  */}
+        <div className="carousel w-[40%] m-auto   mb-3 ">
+          {celebradtyData &&
+            celebradtyData.map((celebraty) => (
+              <CarouselSlide
+                {...celebraty}
+                key={celebraty.slideNumber}
+                totalSlide={celebradtyData.length}
+              />
+            ))}
+        </div>
       </div>
     </HomeLayout>
   );
