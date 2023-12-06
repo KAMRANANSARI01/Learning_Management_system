@@ -7,8 +7,8 @@ const HomePage = () => {
   return (
     <>
     <HomeLayout>
-        <div className="flex flex-col bg-red-600   sm:flex-row items-center sm:justify-between pt-10 h-[90vh] lg:mx-20 ">
-           <div className="sm:w-1/2  bg-slate-300  sm:px-20 gap-5  flex flex-col justify-center items-center sm:gap-3  h-[60%]">
+        <div className="flex flex-col   sm:flex-row items-center sm:justify-between pt-10 h-[90vh] lg:mx-20 ">
+           <div className="sm:w-[60%]   px-4 gap-5 sm:px-5 lg:px-20   flex flex-col justify-center items-center sm:gap-3 md:gap-6 lg:gap-9  h-[60%] lg:h-[70%]">
                 <h1 className="lg:text-5xl  text-2xl font-semibold  text-white">
                     Find Out Best
                     <span className='text-yellow-500 font-bold'> Online Courses</span>
@@ -32,8 +32,8 @@ const HomePage = () => {
                     </Link>
                 </div>
            </div>
-           <div className='sm:w-1/2  h-[50%] bg-yellow-800 flex items-center justify-center'>
-                <img className=' h-[80%]'  src= {homeImg}  alt="img" />
+           <div className='sm:w-1/2  h-[50%]  flex items-center justify-center'>
+                <img className='w-full h-[80%]'  src= {homeImg}  alt="img" />
            </div>
         </div>
     </HomeLayout>
