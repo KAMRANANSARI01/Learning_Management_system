@@ -22,7 +22,7 @@ const userSchema = new Schema(
     },
     password: {
       type: "String",
-      required: [true, "email is required"],
+      required: [true, "password is required"],
       minLength: [6, "password must be contain atleast 6 char."],
       select: false,
     },
@@ -79,7 +79,7 @@ userSchema.methods = {
     return await bcrypt.compare(plainTextPassword, this.password);
   },
   generatePasswordResetToken: async function () {
-    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetToken = crypto.randomBytes(20).toString("hex");//it will send to the url's query params
 
     this.forgotPasswordToken = crypto
       .createHash("sha256")

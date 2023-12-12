@@ -16,8 +16,8 @@ let transporter = nodemailer.createTransport({
   await transporter.sendMail({
     from : process.env.SMTP_FROM_EMAIL,//sender address
     to : email, //user email
-    subject : subject,
-    html : message
+    subject : subject,//subject line
+    html : message//html body
   })
 }
 

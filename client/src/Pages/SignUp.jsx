@@ -4,10 +4,11 @@ import HomeLayout from "../Layouts/HomeLayout";
 import { BsPersonCircle } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { createAcount } from "../Redux/Slices/AuthSlice";
 
 const SignUp = () => {
-  const dispatch = useDispatch;
-  const navigate = useNavigate;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [previewImage, setPreviewImage] = useState("");
 
@@ -43,9 +44,10 @@ const SignUp = () => {
       setPreviewImage(this.result);
     });
   }
+
   //adding validation
 
-  function createNewAccount(event) {
+  async function createNewAccount(event) {
     event.preventDefault();
 
     if (
@@ -61,6 +63,7 @@ const SignUp = () => {
     //checking name length
     if (signupData.fullName.length < 5) {
       toast.error("name length should be atleast 5 character");
+      return;
     }
 
     //email validation
@@ -74,7 +77,7 @@ const SignUp = () => {
     }
     //Password validation
     if (
-      !signupData.email.match(
+      !signupData.password.match(
         /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
       )
     ) {
@@ -92,15 +95,16 @@ const SignUp = () => {
     formData.append("avatar", SignUp.avatar);
 
     //making dispatch action
-
-    navigate("/")
+    const response = await dispatch(createAcount(formData));
+    console.log(response);
+    if (response?.payload?.success) navigate("/");
     setSignupData({
-        fullName: "",
-        email: "",
-        password: "",
-        avatar: "",
-    })
-    setPreviewImage("")
+      fullName: "",
+      email: "",
+      password: "",
+      avatar: "",
+    });
+    setPreviewImage("");
   }
 
   return (

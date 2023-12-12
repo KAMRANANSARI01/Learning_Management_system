@@ -19,7 +19,7 @@ const register = async (req, res, next) => {
   const { fullName, email, password} = req.body;
 
   //adding some validations
-  if (!fullName || !email || !password || !role) {
+  if (!fullName || !email || !password ) {
     return next(new AppError("All fields are required", 400));
   }
   //checking that user is already exist or not
@@ -158,7 +158,7 @@ const getProfile = async (req, res ,next) => {
 const forgotPassword = async function (req, res, next) {
   try {
     const { email } = req.body;
-
+    console.log(email)
     if (!email) {
       return next(new AppError("email is required", 400));
     }
@@ -174,12 +174,14 @@ const forgotPassword = async function (req, res, next) {
 
     const resetToken = await user.generatePasswordResetToken();
 
-    await user.save();
+    await user.save();//saving token in database
 
-    const resetPassswordUrl = `process.env.FRONTEND_URL/reset-password/${resetToken}`;
-    //here we are definding subject and msd that send to the user for resting the password.
+    const resetPassswordUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    //here we are defining subject and msg that send to the user for resting the password.
     const subject = "Reset Password";
     const message = `You can reset your password by clicking <a href = ${resetPassswordUrl} target="_blank">Reset your password</a>.\n if the above link does not work for some reason then copy paste this link in new tab ${resetPassswordUrl}.\n If you have not requested this, kindly ignore.`;
+
+
     try {
       await sendEmail(email, subject, message);
       res.status(200).json({
@@ -189,8 +191,11 @@ const forgotPassword = async function (req, res, next) {
     } catch (error) {
       user.forgotPasswordExpiry = undefined;
       user.forgotPasswordToken = undefined;
+      await user.save()
       return next(new AppError(error.message, 403));
     }
+
+
   } catch (error) {
     console.log(error);
     return next(new AppError(error.message, 400));
@@ -221,7 +226,7 @@ const resetPassword = async function (req, res, next) {
   //after update password
   user.forgotPasswordToken = undefined;
   user.forgotPasswordToken = undefined;
-  user.save(); //new password save into database
+   user.save(); //new password save into database
 
   res.status(200).json({
     success: true,
