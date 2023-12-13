@@ -4,12 +4,12 @@ const sendEmail = async function (email,subject,message){
 //create reusable transporter object using the default SMPT transport
 
 let transporter = nodemailer.createTransport({
-    host: process.env.SMPT_HOST,
-    port : process.env.SMPT_PORT,
+    host: process.env.SMTP_HOST,
+    port : process.env.SMTP_PORT,
     secure : false,
     auth:{
-        user: process.env.SMPT_USERNAME,
-        pass : process.env.SMPT_PASSWORD
+        user: process.env.SMTP_USERNAME,
+        pass : process.env.SMTP_PASSWORD
     }
 })
   //send mail with defined transport object

@@ -19,7 +19,18 @@ const buySubscription = async (req, res, next) => {
   if (user.role === "ADMIN") {
     return next(new AppError("Admin can't buy courses", 403));
   }
+
+  const subscription = await razorpay.subscriptions.create({
+    plan_id : process.env.RAZORPAY_PLAN_ID,
+    costumer_notify : 1
+  })
+ 
+  
+
 };
+
+
+
 
 const verifySubscription = async (req, res, next) => {};
 

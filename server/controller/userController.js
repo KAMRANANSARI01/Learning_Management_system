@@ -16,10 +16,10 @@ const cookieOption = {
 //***********for user registration***************//
 const register = async (req, res, next) => {
   console.log(req.body);
-  const { fullName, email, password} = req.body;
+  const { fullName, email, password } = req.body;
 
   //adding some validations
-  if (!fullName || !email || !password ) {
+  if (!fullName || !email || !password) {
     return next(new AppError("All fields are required", 400));
   }
   //checking that user is already exist or not
@@ -36,8 +36,7 @@ const register = async (req, res, next) => {
       public_id: email,
       secure_url:
         "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pngegg.com%2Fen%2Fsearch%3Fq%3Davatars&psig=AOvVaw1Ep2HrPQJQBpISDmhIq5_Y&ust=1698941282388000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCMi5xM-Xo4IDFQAAAAAdAAAAABAE",
-    }
-    
+    },
   });
 
   if (!user) {
@@ -119,7 +118,7 @@ const login = async (req, res, next) => {
 };
 
 //***************for logout************//
-const logout = async (req, res ,next) => {
+const logout = async (req, res, next) => {
   try {
     await res.cookie("token", null, {
       secure: true,
@@ -138,7 +137,7 @@ const logout = async (req, res ,next) => {
 };
 
 //*************for getProfile**********//
-const getProfile = async (req, res ,next) => {
+const getProfile = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -158,7 +157,7 @@ const getProfile = async (req, res ,next) => {
 const forgotPassword = async function (req, res, next) {
   try {
     const { email } = req.body;
-    console.log(email)
+    console.log(email);
     if (!email) {
       return next(new AppError("email is required", 400));
     }
@@ -174,28 +173,26 @@ const forgotPassword = async function (req, res, next) {
 
     const resetToken = await user.generatePasswordResetToken();
 
-    await user.save();//saving token in database
+    await user.save(); //saving token in database
 
     const resetPassswordUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
     //here we are defining subject and msg that send to the user for resting the password.
     const subject = "Reset Password";
     const message = `You can reset your password by clicking <a href = ${resetPassswordUrl} target="_blank">Reset your password</a>.\n if the above link does not work for some reason then copy paste this link in new tab ${resetPassswordUrl}.\n If you have not requested this, kindly ignore.`;
-
+    console.log(resetPassswordUrl);
 
     try {
       await sendEmail(email, subject, message);
       res.status(200).json({
-        success: ture,
+        success: true,
         message: `Reset password token has been sent to the ${email} successfully`,
       });
     } catch (error) {
       user.forgotPasswordExpiry = undefined;
       user.forgotPasswordToken = undefined;
-      await user.save()
+      await user.save();
       return next(new AppError(error.message, 403));
     }
-
-
   } catch (error) {
     console.log(error);
     return next(new AppError(error.message, 400));
@@ -204,7 +201,7 @@ const forgotPassword = async function (req, res, next) {
 
 //*************Reset password****************//
 const resetPassword = async function (req, res, next) {
-  const { resetToken } = req.param; //resettoken got from url
+  const { resetToken } = req.params; //resettoken got from url
   const { password } = req.body; // new password is filled
 
   const forgotPasswordToken = crypto
@@ -226,7 +223,7 @@ const resetPassword = async function (req, res, next) {
   //after update password
   user.forgotPasswordToken = undefined;
   user.forgotPasswordToken = undefined;
-   user.save(); //new password save into database
+  user.save(); //new password save into database
 
   res.status(200).json({
     success: true,
