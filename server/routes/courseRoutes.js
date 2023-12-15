@@ -8,7 +8,11 @@ import {
   removeCourseLecture,
   updateCourse,
 } from "../controller/course.controller.js";
-import { authorizedRole, isLoggedIn } from "../middleware/auth.middleware.js";
+import {
+  authorizeSubscriber,
+  authorizedRole,
+  isLoggedIn,
+} from "../middleware/auth.middleware.js";
 import upload from "../middleware/multer.middleware.js";
 
 const router = Router();
@@ -25,7 +29,7 @@ router
 
 router
   .route("/:id")
-  .get(isLoggedIn, getLecturesByCourseId) //for user to after login fetch course lecture
+  .get(isLoggedIn, authorizeSubscriber, getLecturesByCourseId) //for user to after login fetch course lecture
   .put(isLoggedIn, authorizedRole("ADMIN"), updateCourse) //for admin to update course
   .delete(isLoggedIn, authorizedRole("ADMIN"), removeCourse) //for admin to delete course
   .post(
@@ -34,6 +38,6 @@ router
     upload.single("lecture"),
     addLecturesToCourseById
   ) //for adding lectures in course by admin
-  .delete(isLoggedIn,authorizedRole("ADMIN"),removeCourseLecture)//now this is not working have to fix it.
+  .delete(isLoggedIn, authorizedRole("ADMIN"), removeCourseLecture); //now this is not working have to fix it.
 
 export default router;
