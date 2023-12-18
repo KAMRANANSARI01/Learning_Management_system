@@ -119,7 +119,7 @@ const cancelSubscription = async (req, res, next) => {
   }
 };
 
- const allPayments = asyncHandler(async (req, res, _next) => {
+ const allPayments = async (req, res, _next) => {
   const { count, skip } = req.query;
 
   // Find all subscriptions from razorpay
@@ -186,7 +186,7 @@ const cancelSubscription = async (req, res, next) => {
     finalMonths,
     monthlySalesRecord,
   });
-});
+};
 export {
   getRazorpayApiKey,
   buySubscription,
