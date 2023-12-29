@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import HomeLayout from "../Layouts/HomeLayout";
+import HomeLayout from "../Layouts/HomeLayout.jsx";
 import { BsPersonCircle } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { createAcount } from "../Redux/Slices/AuthSlice";
+import { createAcount } from "../Redux/Slices/AuthSlice.js";
 
 const SignUp = () => {
   const dispatch = useDispatch();
@@ -32,10 +32,12 @@ const SignUp = () => {
     //getting image
     const uploadImg = event.target.files[0];
 
-    setSignupData({
-      ...signupData,
-      avatar: uploadImg,
-    });
+    if (uploadImg) {
+      setSignupData({
+        ...signupData,
+        avatar: uploadImg,
+      });
+    }
 
     const fileReader = new FileReader();
     fileReader.readAsDataURL(uploadImg);
@@ -49,7 +51,6 @@ const SignUp = () => {
 
   async function createNewAccount(event) {
     event.preventDefault();
-
     if (
       !signupData.fullName ||
       !signupData.email ||
@@ -89,15 +90,17 @@ const SignUp = () => {
 
     //making a form data for sending into server.
     const formData = new FormData();
-    formData.append("fullname", SignUp.fullName);
-    formData.append("email", SignUp.email);
-    formData.append("password", SignUp.password);
-    formData.append("avatar", SignUp.avatar);
+    formData.append("fullName", signupData.fullName);
+    formData.append("email", signupData.email);
+    formData.append("password", signupData.password);
+    formData.append("avatar", signupData.avatar);
 
     //making dispatch action
+    console.log(formData);
     const response = await dispatch(createAcount(formData));
     console.log(response);
     if (response?.payload?.success) navigate("/");
+
     setSignupData({
       fullName: "",
       email: "",
@@ -111,7 +114,6 @@ const SignUp = () => {
     <HomeLayout>
       <div className="flex items-center justify-center h-[90vh] w-full">
         <form
-          noValidate
           onSubmit={createNewAccount}
           className="flex flex-col items-center justify-center p-4 rounded-large shadow-[0_0_10px_black]  text-white w-[70%] sm:w-[55%] md:w-[40%] lg:w-[25%] "
         >
@@ -178,7 +180,10 @@ const SignUp = () => {
                 value={signupData.password}
               />
             </div>
-            <button className="w-full py-1 px-3 rounded-sm bg-yellow-500 mt-9 font-semibold text-lg hover:bg-yellow-600">
+            <button
+              type="submit"
+              className="w-full py-1 px-3 rounded-sm bg-yellow-500 mt-9 font-semibold text-lg hover:bg-yellow-600"
+            >
               Create Account
             </button>
             <p className="text-center mt-2">

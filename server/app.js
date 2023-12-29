@@ -11,10 +11,14 @@ config();
 const app = express();
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))//its used to get qury param from encoded or encripted url.
+// app.use(cors({
+//     origin:[process.env.FRONTEND_URL],
+//     Credential:true
+// }))
 app.use(cors({
-    origin:[process.env.FRONTEND_URL],
-    Credential:true
-}))
+    origin: 'http://localhost:5173', // Specify the allowed origin directly
+    credentials: true,
+  }));
 app.use(cookieParser())
 app.use(morgan('dev'))
 app.use("/api/v1/user",userRoutes)//for user homePage

@@ -4,7 +4,7 @@ import { Route , Routes } from "react-router-dom"
 import HomePage from "./Pages/HomePage.jsx"
 import AboutPage from "./Pages/AboutPage.jsx"
 import NotFound from './Pages/NotFound.jsx'
-import SignUp from './Pages/signUp.jsx'
+import SignUp from './Pages/SignUp.jsx'
 
 function App() {
 
