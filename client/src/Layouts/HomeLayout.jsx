@@ -93,10 +93,10 @@ import { useDispatch, useSelector } from "react-redux";
             {isLoggedIn && (
               <li className="absolute w-[90%] bottom-4">
                 <div className="w-full flex items-center justify-center">
-                  <button className="btn-primary py-1 px-4 font-semibold rounded-md w-full  ">
+                  <button className="btn-primary bg-blue-700 hover:bg-blue-600 transition-all ease-in-out duration-200  py-1 px-4 font-semibold rounded-md w-full ">
                     <Link to="/user/profile">Profile</Link>
                   </button>
-                  <button className="btn-secondry py-1 px-4 font-semibold rounded-md w-full  ">
+                  <button className="btn-secondry bg-red-500 hover:bg-red-600 transition-all ease-in-out duration-200 py-1 px-4 font-semibold rounded-md w-full ">
                     <Link onClick={handleLogout}>Logout</Link>
                   </button>
                 </div>

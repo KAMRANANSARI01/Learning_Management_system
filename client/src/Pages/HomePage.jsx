@@ -8,12 +8,12 @@ const HomePage = () => {
     <>
     <HomeLayout>
         <div className="flex flex-col   sm:flex-row items-center sm:justify-between pt-10 h-[90vh] lg:mx-20 ">
-           <div className="sm:w-[60%]   px-4 gap-5 sm:px-5 lg:px-20   flex flex-col justify-center items-center sm:gap-3 md:gap-6 lg:gap-9  h-[60%] lg:h-[70%]">
+           <div className="sm:w-[60%]   px-4 gap-5 sm:px-5 lg:px-20   flex flex-col justify-center items-start sm:gap-3 md:gap-6 lg:gap-9  h-[60%] lg:h-[70%]">
                 <h1 className="lg:text-5xl  text-2xl font-semibold  text-white">
                     Find Out Best
                     <span className='text-yellow-500 font-bold'> Online Courses</span>
                 </h1>
-                <p className="text-lg sm:text-2xl text-white text-center ">
+                <p className="text-lg sm:text-2xl text-white text-start ">
                     We have a large library of courses 
                     thaught by highly skilled and qualified faculties at very affordable cost.
                 </p>

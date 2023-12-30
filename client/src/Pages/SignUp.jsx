@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import HomeLayout from "../Layouts/HomeLayout.jsx";
 import { BsPersonCircle } from "react-icons/bs";
-import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { createAcount } from "../Redux/Slices/AuthSlice.js";
 
@@ -99,7 +99,7 @@ const SignUp = () => {
     console.log(formData);
     const response = await dispatch(createAcount(formData));
     console.log(response);
-    if (response?.payload?.success) navigate("/");
+  if (response?.payload?.success) navigate("/");
 
     setSignupData({
       fullName: "",
