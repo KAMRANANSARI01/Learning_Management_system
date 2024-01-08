@@ -28,33 +28,32 @@ function HomeLayout({ children }) {
     drawerSide[0].style.width = 0;
   };
 
-  // async function handleLogout(e) {
-  //   e.preventDefault();
-  //   const res = await dispatch(loggedout());
-  //   console.log(res)
-  //   if (res?.payload?.success) {
-  //     navigate("/");
-  //   }
-  // }
   async function handleLogout(e) {
     e.preventDefault();
-  
-    try {
-      // Dispatch the loggedout action
-      const action = await dispatch(loggedout());
-  
-      if (loggedout.fulfilled.match(action)) {
-        const successMessage = action.payload;
-        console.log(successMessage);
-  
-        navigate("/");
-      } else {
-        console.error("Failed to log out");
-      }
-    } catch (error) {
-      console.error("Error during logout:", error.message);
+    const res = await dispatch(loggedout());
+    console.log(res)
+    if (res?.payload?.success) {
+      navigate("/");
     }
   }
+  // async function handleLogout(e) {
+  //   e.preventDefault();
+  
+  //   try {
+  //     // Dispatch the loggedout action
+  //     const action = await dispatch(loggedout());
+  
+  //     if (loggedout.fulfilled.match(action)) {
+  //       const successMessage = action.payload;
+  //       console.log(successMessage);
+  //       navigate("/");
+  //     } else {
+  //       console.error("Failed to log out");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during logout:", error.message);
+  //   }
+  // }
   return (
     <div className="min-h-[90vh]">
       <div className="drawer w-fit z-50  absolute left-0 ">

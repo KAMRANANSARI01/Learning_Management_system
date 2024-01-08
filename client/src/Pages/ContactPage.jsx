@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import HomeLayout from "../Layouts/HomeLayout";
+import toast from "react-hot-toast";
+import { isValidEmail } from "../Helpers/regexMatcher";
+import axiosInstance from "../Helpers/axios";
 
 const ContactPage = () => {
   const [inputData, setInputData] = useState({
@@ -15,16 +18,51 @@ const ContactPage = () => {
       [name]: value,
     });
   }
- 
-//connecting to backend to save the inputData
 
+  //connecting to backend and adding onsubmit function
 
+  async function onFormSubmit(e) {
+    e.preventDefault();
+    //adding some validations
+
+    if (!inputData.name || !inputData.email || !inputData.message) {
+      toast.error("All feilds are mandatory.");
+      return;
+    }
+    if (!isValidEmail(inputData.email)) {
+      toast.error("please enter valid email.");
+      return;
+    }
+
+    try {
+      const res = axiosInstance.post("/contact", inputData);
+      toast.promise(res, {
+        loading: "submitting your response ",
+        success: "Form submitted successfully",
+        error: "failed to submit",
+      });
+
+      const contactResponse = await res;
+      console.log(contactResponse)
+      if (contactResponse?.data?.success) {
+        setInputData({
+          name: "",
+          email: "",
+          message: "",
+        });
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Operation failed...")
+    }
+  }
 
   return (
     <HomeLayout>
-         <div className="flex items-center justify-center h-[90vh]">
+      <div className="flex items-center justify-center h-[90vh]">
         <form
-        //   onSubmit={handleFormSubmit}
+          onSubmit={onFormSubmit}
+          noValidate
           className="flex flex-col items-center justify-center gap-2 p-5 rounded-md text-white shadow-[0_0_10px_black] w-[22rem]"
         >
           <h1 className="text-3xl font-semibold">Contact Form</h1>
