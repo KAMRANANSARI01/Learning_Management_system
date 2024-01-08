@@ -33,7 +33,7 @@ export const createAcount = createAsyncThunk("/auth/signup", async (data) => {
 
 export const login = createAsyncThunk("/auth/login", async (data) => {
   try {
-    console.log(data);
+    // console.log(data);
     const res = axiosInstance.post("user/login", data);
     toast.promise(res, {
       loading: "wait! authentication in progress...",
@@ -48,19 +48,47 @@ export const login = createAsyncThunk("/auth/login", async (data) => {
   }
 });
 
+//for logout
+export const loggedout = createAsyncThunk("auth/logout", async () => {
+  try {
+    let res = axiosInstance.post("/user/logout");
+
+    toast.promise(res, {
+      loading: "wait! log out in progress....",
+      success: (data) => {
+        return data?.data?.message;
+      },
+      error: "Failed to log out",
+    });
+
+    // getting response resolved here
+    return (await res).data;
+
+  } catch (error) {
+    toast.error(error.message);
+  }
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(login.fulfilled, (state, action) => {
-      localStorage.setItem("data", JSON.stringify(action?.payload?.user));
-      localStorage.setItem("isLoggedIn", true);
-      localStorage.setItem("role", action?.payload?.user?.role);
-      state.isLoggedIn = true;
-      state.data = action?.payload?.user;
-      state.role = action?.payload?.user?.role;
-    });
+    builder
+      .addCase(login.fulfilled, (state, action) => {
+        localStorage.setItem("data", JSON.stringify(action?.payload?.user));
+        localStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("role", action?.payload?.user?.role);
+        state.isLoggedIn = true;
+        state.data = action?.payload?.user;
+        state.role = action?.payload?.user?.role;
+      })
+      .addCase(loggedout.fulfilled, (state) => {
+        localStorage.clear();
+        state.data = {};
+        state.isLoggedIn = false;
+        state.role = "";
+      });
   },
 });
 

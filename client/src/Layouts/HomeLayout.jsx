@@ -4,8 +4,10 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import Footer from "../Component/Footer.jsx";
 import { useDispatch, useSelector } from "react-redux";
+import { loggedout } from "../Redux/Slices/AuthSlice.js";
 
-  function HomeLayout({ children }){
+
+function HomeLayout({ children }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -20,20 +22,39 @@ import { useDispatch, useSelector } from "react-redux";
 
   const hideDrawer = () => {
     const element = document.getElementsByClassName("drawer-toggle");
-    element[0].checked= false;
+    element[0].checked = false;
 
     const drawerSide = document.getElementsByClassName("drawer-side");
     drawerSide[0].style.width = 0;
   };
 
-  const handleLogout = (e) => {
+  // async function handleLogout(e) {
+  //   e.preventDefault();
+  //   const res = await dispatch(loggedout());
+  //   console.log(res)
+  //   if (res?.payload?.success) {
+  //     navigate("/");
+  //   }
+  // }
+  async function handleLogout(e) {
     e.preventDefault();
-    // const res = await dispatch(logout())
-    if(res?.payload?.success){
-        navigate('/')
+  
+    try {
+      // Dispatch the loggedout action
+      const action = await dispatch(loggedout());
+  
+      if (loggedout.fulfilled.match(action)) {
+        const successMessage = action.payload;
+        console.log(successMessage);
+  
+        navigate("/");
+      } else {
+        console.error("Failed to log out");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error.message);
     }
-  };
-
+  }
   return (
     <div className="min-h-[90vh]">
       <div className="drawer w-fit z-50  absolute left-0 ">
@@ -64,19 +85,19 @@ import { useDispatch, useSelector } from "react-redux";
             </li>
             {/* if user is loggedin and admin then show */}
             {isLoggedIn && role === "ADMIN" && (
-              <li  className="hover:font-bold transition-all ease-in-out duration-300">
+              <li className="hover:font-bold transition-all ease-in-out duration-300">
                 <Link to="/admin/dashboard">Admin Dashboard</Link>
               </li>
             )}
 
-            <li  className="hover:font-bold transition-all ease-in-out duration-300">
+            <li className="hover:font-bold transition-all ease-in-out duration-300">
               <Link to="/about">About Us</Link>
             </li>
-            <li  className="hover:font-bold transition-all ease-in-out duration-300">
+            <li className="hover:font-bold transition-all ease-in-out duration-300">
               <Link to="/contact">Contact Us</Link>
             </li>
-            <li  className="hover:font-bold transition-all ease-in-out duration-300">
-              <Link to="/courses">All Courses</Link>
+            <li className="hover:font-bold transition-all ease-in-out duration-300">
+              <Link to="/course">All Courses</Link>
             </li>
             {!isLoggedIn && (
               <li className="absolute w-[90%] bottom-4">
@@ -109,6 +130,6 @@ import { useDispatch, useSelector } from "react-redux";
       <Footer />
     </div>
   );
-};
+}
 
 export default HomeLayout;
