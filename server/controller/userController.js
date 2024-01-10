@@ -271,7 +271,7 @@ const changePassword = async function (req, res, next) {
 const updateProfile = async function (req, res, next) {
   //here we are changing fullName and the profilePic
   const { fullName } = req.body;
-  const { id } = req.user.id;
+  const { id } = req.params;
 
   //now we check the user is exist in db or not
 

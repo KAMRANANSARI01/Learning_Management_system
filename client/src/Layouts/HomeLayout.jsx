@@ -88,6 +88,11 @@ function HomeLayout({ children }) {
                 <Link to="/admin/dashboard">Admin Dashboard</Link>
               </li>
             )}
+            {isLoggedIn && role === "ADMIN" && (
+              <li className="hover:font-bold transition-all ease-in-out duration-300">
+                <Link to="/course/create">Create Course</Link>
+              </li>
+            )}
 
             <li className="hover:font-bold transition-all ease-in-out duration-300">
               <Link to="/about">About Us</Link>

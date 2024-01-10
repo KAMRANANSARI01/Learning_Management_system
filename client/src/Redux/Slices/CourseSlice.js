@@ -22,17 +22,44 @@ export const getAllCourses = createAsyncThunk("/course/get", async () => {
   }
 });
 
+//create asyncthunk for creating course and connecting it to the server
+
+export const createNewCourse = createAsyncThunk(
+  "/course/create",
+  async (data) => {
+    try {
+      //making form data for sending it to the backend server we can defind it on createCourse component also.
+      const formData = new FormData();
+      formData.append("title", data?.title);
+      formData.append("category", data?.category);
+      formData.append("createdBy", data?.createdBy);
+      formData.append("description", data?.description);
+      formData.append("thumbnail", data?.thumbnail);
+      //now we req call to the server
+      const response = axiosInstance.post("/course", formData);
+      toast.promise(response, {
+        loading: "Creating new course",
+        success: "course created successfully!",
+        error: "Failed to create course.",
+      });
+      return (await response).data;
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+  }
+);
+
 const courseSlice = createSlice({
   name: "courses",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getAllCourses.fulfilled, (state,action)=>{
-        if(action.payload){
-            console.log(action.payload)
-            state.courseData = [...action.payload];
-        }
-    })
+    builder.addCase(getAllCourses.fulfilled, (state, action) => {
+      if (action.payload) {
+        console.log(action.payload);
+        state.courseData = [...action.payload];
+      }
+    });
   },
 });
 
