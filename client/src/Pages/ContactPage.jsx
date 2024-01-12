@@ -3,8 +3,10 @@ import HomeLayout from "../Layouts/HomeLayout";
 import toast from "react-hot-toast";
 import { isValidEmail } from "../Helpers/regexMatcher";
 import axiosInstance from "../Helpers/axios";
+import { useNavigate } from "react-router-dom";
 
 const ContactPage = () => {
+  const navigate = useNavigate()
   const [inputData, setInputData] = useState({
     name: "",
     email: "",
@@ -50,6 +52,7 @@ const ContactPage = () => {
           email: "",
           message: "",
         });
+        navigate("/")
       }
     } catch (error) {
       console.log(error)

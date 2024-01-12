@@ -20,7 +20,7 @@ const EditProfile = () => {
     userId: useSelector((state) => state?.auth?.data?._id),
   });
   //for image update
-  
+
   function getImage(event) {
     event.preventDefault();
     //getting image
@@ -41,22 +41,23 @@ const EditProfile = () => {
     });
   }
 
-//   function handleImage(e) {
-//     e.preventDefault();
-//     const uploadedImg = e.target.files[0];
-//     if (uploadedImg) {
-//       const fileReader = new FileReader();
-//       fileReader.readAsDataURL(uploadedImg);
-//       fileReader.addEventListener("load", () => {
-//         setData({
-//           ...data,
-//           console.log(this.result),
-//           previewImage:this.result,
-//           avatar: uploadedImg,
-//         });
-//       });
-//     }
-//   }
+  // function handleImage(e) {
+  //   e.preventDefault();
+  //   const uploadedImg = e.target.files[0];
+  //   if (uploadedImg) {
+  //     const fileReader = new FileReader();
+  //     fileReader.readAsDataURL(uploadedImg);
+  //     fileReader.addEventListener("load", () => {
+  //       console.log(fileReader.result); // Log the result before setting it in state
+  //       setData({
+  //         ...data,
+  //         previewImage: fileReader.result,
+  //         avatar: uploadedImg,
+  //       });
+  //     });
+  //   }
+  // }
+  
   //for handle user input
   function handleUserInput(e) {
     e.preventDefault();

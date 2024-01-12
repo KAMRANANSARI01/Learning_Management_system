@@ -5,25 +5,21 @@ import toast from "react-hot-toast";
 const initialState = {
   isLoggedIn: localStorage.getItem("isLoggedIn") || false,
   role: localStorage.getItem("role") || "",
+  // data: localStorage.getItem("data") || {},
   data:
     localStorage.getItem("data") !== undefined
       ? JSON.parse(localStorage.getItem("data"))
       : {},
 };
 
-// creating asycThunk function to integrate with backend server
 
-//for register
 
 export const createAcount = createAsyncThunk("/auth/signup", async (data) => {
   try {
-    console.log(data);
     const res = axiosInstance.post("user/register", data);
     toast.promise(res, {
       loading: "wait! creating your account",
-      success: (data) => {
-        return data?.data?.message;
-      },
+      success: (data) => data?.data?.message,
       error: "Failed to create your account",
     });
     return (await res).data;
@@ -32,17 +28,12 @@ export const createAcount = createAsyncThunk("/auth/signup", async (data) => {
   }
 });
 
-//for login
-
 export const login = createAsyncThunk("/auth/login", async (data) => {
   try {
-    // console.log(data);
     const res = axiosInstance.post("user/login", data);
     toast.promise(res, {
       loading: "wait! authentication in progress...",
-      success: (data) => {
-        return data?.data?.message;
-      },
+      success: (data) => data?.data?.message,
       error: "Failed to login.",
     });
     return (await res).data;
@@ -51,7 +42,6 @@ export const login = createAsyncThunk("/auth/login", async (data) => {
   }
 });
 
-// //for logout
 export const loggedout = createAsyncThunk("auth/logout", async () => {
   try {
     let res = axiosInstance.post("user/logout");

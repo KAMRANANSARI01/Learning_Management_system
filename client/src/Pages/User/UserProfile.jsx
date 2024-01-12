@@ -1,11 +1,22 @@
 import React from 'react'
 import HomeLayout from '../../Layouts/HomeLayout'
 import { Link, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { cancelCourseBundle } from '../../Redux/Slices/PaymentSlice';
+import { getUserData } from '../../Redux/Slices/AuthSlice';
+import toast from 'react-hot-toast';
 
 const UserProfile = () => {
     const navigate = useNavigate();
+    const dispatch= useDispatch()
     const userData = useSelector((state)=>state?.auth?.data)
+    const handleCourseCancelSubscription = async()=>{
+      toast("Initiating cancellation.")
+      await dispatch(cancelCourseBundle())
+      await dispatch(getUserData())
+      toast.success("cancellation Completed!")
+      navigate("/")
+    }
   return (
     <HomeLayout>
         <div className="min-h-[90vh] flex items-center justify-center">
@@ -56,7 +67,7 @@ const UserProfile = () => {
 
           {userData?.subscription?.status === "active" && (
             <button
-            //   onClick={handleCourseCancelSubscription}
+              // onClick={handleCourseCancelSubscription}//this button is not working have to fix it
               className="w-full bg-red-600 hover:bg-red-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center"
             >
               Cancel Subscription

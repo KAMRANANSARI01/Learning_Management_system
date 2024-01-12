@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { allPayments, buySubscription, cancelSubscription, getRazorpayApiKey, verifySubscription } from "../controller/paymentController.js";
+import { allPayments,  buySubscription,  cancelSubscription, getRazorpayApiKey, verifySubscription } from "../controller/paymentController.js";
 import {  authorizedRole, isLoggedIn } from "../middleware/auth.middleware.js";
 
 
@@ -9,7 +9,7 @@ router.route('/razorpay-key')
 .get(isLoggedIn,getRazorpayApiKey)
 
 router.route('/subcribe')
-.post(isLoggedIn, buySubscription)
+.post(isLoggedIn,buySubscription)
 
 
 router.route('/verify')

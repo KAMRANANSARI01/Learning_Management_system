@@ -22,13 +22,17 @@ app.use(cors({
   }));
 app.use(cookieParser())
 app.use(morgan('dev'))
+// Server Status Check Route
+app.get('/ping', (_req, res) => {
+    res.send('Pong');
+  });
 app.use("/api/v1/user",userRoutes)//for user homePage
 app.use("/api/v1/course",courseRoutes)//for course homepage
 app.use("/api/v1/payment",paymentRoutes)
 app.use('/api/v1',miscRoutes)
-app.use("/",(req,res)=>{
-    res.send("hello world")
-})
+// app.use("/",(req,res)=>{
+//     res.send("hello world")
+// })
 app.all("*",(req,res)=>{
     res.status(404).send("OOPS!! Page not found")
 })

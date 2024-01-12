@@ -1,5 +1,6 @@
 //firstly we check that user is login or not and for this we extract token form req.cookie if token is available its mean user is logged in
 
+import User from "../models/userSchema.js";
 import AppError from "../utils/error.utils.js";
 import jwt from "jsonwebtoken";
 
@@ -32,9 +33,9 @@ const authorizedRole =
 //for checking that user is autherized subscriber or not
 
 const authorizeSubscriber = async (req, res, next) => {
-  const subscription = await req.user.subscription;
-  const currentRole = await req.user.role;
-  if (currentRole !== "ADMIN" && subscription.status !== "active") {
+   const user = await User.findById(req.user.id)
+   console.log(user)
+  if (user.role !== "ADMIN" && user.subscription.status !== "active") {
     next(new AppError("please subscribe to fetch this route", 403));
   }
   next();

@@ -4,6 +4,7 @@ import User from "../models/userSchema.js";
 import AppError from "../utils/error.utils.js";
 import crypto from "crypto";
 
+//for getting razorpay apikey
 const getRazorpayApiKey = async (req, res, next) => {
   try {
     res.status(200).json({
@@ -16,37 +17,49 @@ const getRazorpayApiKey = async (req, res, next) => {
   }
 };
 
+//for purchase subscription
 const buySubscription = async (req, res, next) => {
+  // Extracting ID from request obj
   try {
     const { id } = req.user;
+
+    // Finding the user based on the ID
     const user = await User.findById(id);
+
     if (!user) {
-      return next(new AppError("unauthenticated, please login again.", 403));
+      return next(new AppError("Unauthorized, please login"));
     }
 
+    // Checking the user role
     if (user.role === "ADMIN") {
-      return next(new AppError("Admin can't buy courses", 403));
+      return next(new AppError("Admin cannot purchase a subscription", 400));
     }
 
+    // Creating a subscription using razorpay that we imported from the server
     const subscription = await razorpay.subscriptions.create({
-      plan_id: process.env.RAZORPAY_PLAN_ID,
-      costumer_notify: 1,
+      plan_id: process.env.RAZORPAY_PLAN_ID, // The unique plan ID
+      customer_notify: 1, // 1 means razorpay will handle notifying the customer, 0 means we will not notify the customer
+      total_count: 12, // 12 means it will charge every month for a 1-year sub.
     });
-
+    console.log(subscription);
+    // Adding the ID and the status to the user account
     user.subscription.id = subscription.id;
     user.subscription.status = subscription.status;
 
+    // Saving the user object
     await user.save();
 
     res.status(200).json({
       success: true,
-      message: "user subscribed successfully!",
+      message: "subscribed successfully",
       subscription_id: subscription.id,
     });
   } catch (error) {
-    return next(new AppError(error.message, 500));
+    return next(new AppError(error.message, 503));
   }
 };
+
+//for verify subscription
 
 const verifySubscription = async (req, res, next) => {
   try {
@@ -83,7 +96,9 @@ const verifySubscription = async (req, res, next) => {
     });
 
     user.subscription.status = "active";
-    await user.save();
+    console.log(user);
+    const u = await user.save();
+    console.log(u);
 
     res.status(200).json({
       success: true,
@@ -94,31 +109,84 @@ const verifySubscription = async (req, res, next) => {
   }
 };
 
-const cancelSubscription = async (req, res, next) => {
-  try {
-    const { id } = req.user;
-    const user = await User.findById(id);
-    if (!user) {
-      return next(new AppError("unauthenticated, please login again.", 403));
-    }
+//for cancle subscription
 
-    if (user.role === "ADMIN") {
-      return next(new AppError("Admin can't cancel subscription", 403));
-    }
-    //  now we get a subscription id from user data and then cancel the subscription
+ const cancelSubscription = async (req, res, next) => {
+  const { id } = req.user;
 
-    const subscriptionId = user.subscription.id;
-    const cancelSubscription = await razorpay.subscriptions.cancel({
-      subscriptionId,
-    });
+  // Finding the user
+  const user = await User.findById(id);
 
-    user.subscription.status = cancelSubscription.status;
-    user.save();
-  } catch (error) {
-    return next(new AppError(error.message, 500));
+  // Checking the user role
+  if (user.role === "ADMIN") {
+    return next(
+      new AppError("Admin does not need to cannot cancel subscription", 400)
+    );
   }
+
+  // Finding subscription ID from subscription
+  const subscriptionId = user.subscription.id;
+
+  // Creating a subscription using razorpay that we imported from the server
+  try {
+    const subscription = await razorpay.subscriptions.cancel(
+      subscriptionId // subscription id
+    );
+
+    // Adding the subscription status to the user account
+    user.subscription.status = subscription.status;
+
+    // Saving the user object
+    await user.save();
+  } catch (error) {
+    // Returning error if any, and this error is from razorpay so we have statusCode and message built in
+    return next(new AppError(error.error.description, error.statusCode));
+  }
+
+  // Finding the payment using the subscription ID
+  const payment = await Payment.findOne({
+    razorpay_subscription_id: subscriptionId,
+  });
+
+  // Getting the time from the date of successful payment (in milliseconds)
+  const timeSinceSubscribed = Date.now() - payment.createdAt;
+
+  // refund period which in our case is 14 days
+  const refundPeriod = 14 * 24 * 60 * 60 * 1000;
+
+  // Check if refund period has expired or not
+  if (refundPeriod <= timeSinceSubscribed) {
+    return next(
+      new AppError(
+        "Refund period is over, so there will not be any refunds provided.",
+        400
+      )
+    );
+  }
+
+  // If refund period is valid then refund the full amount that the user has paid
+  await razorpay.payments.refund(payment.razorpay_payment_id, {
+    speed: "optimum", // This is required
+  });
+
+  user.subscription.id = undefined; // Remove the subscription ID from user DB
+  user.subscription.status = undefined; // Change the subscription Status in user DB
+
+  await user.save();
+  await payment.remove();
+
+  // Send the response
+  res.status(200).json({
+    success: true,
+    message: "Subscription canceled successfully",
+  });
 };
 
+/**
+ * @GET_RAZORPAY_ID
+ * @ROUTE @GET {{URL}}/api/v1/payments
+ * @ACCESS Private (ADMIN only)
+ */
  const allPayments = async (req, res, _next) => {
   const { count, skip } = req.query;
 
@@ -129,18 +197,18 @@ const cancelSubscription = async (req, res, next) => {
   });
 
   const monthNames = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const finalMonths = {
@@ -181,12 +249,109 @@ const cancelSubscription = async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: 'All payments',
+    message: "All payments",
     allPayments,
     finalMonths,
     monthlySalesRecord,
   });
 };
+// const cancelSubscription = async (req, res, next) => {
+//   try {
+//     const { id } = req.user;
+//     const user = await User.findById(id);
+//     if (!user) {
+//       return next(new AppError("unauthenticated, please login again.", 403));
+//     }
+
+//     if (user.role === "ADMIN") {
+//       return next(new AppError("Admin can't cancel subscription", 403));
+//     }
+//     //  now we get a subscription id from user data and then cancel the subscription
+
+//     const subscriptionId = user.subscription.id;
+//     const cancelSubscription = await razorpay.subscriptions.cancel({
+//       subscriptionId,
+//     });
+
+//     user.subscription.status = cancelSubscription.status;
+//     user.save();
+//     res.status(200).json({
+//       success: true,
+//       message: 'Subscription canceled successfully',
+//     });
+//   } catch (error) {
+//     return next(new AppError(error.message, 500));
+//   }
+// };
+
+//  const allPayments = async (req, res, _next) => {
+//   const { count, skip } = req.query;
+
+//   // Find all subscriptions from razorpay
+//   const allPayments = await razorpay.subscriptions.all({
+//     count: count ? count : 10, // If count is sent then use that else default to 10
+//     skip: skip ? skip : 0, // // If skip is sent then use that else default to 0
+//   });
+
+//   const monthNames = [
+//     'January',
+//     'February',
+//     'March',
+//     'April',
+//     'May',
+//     'June',
+//     'July',
+//     'August',
+//     'September',
+//     'October',
+//     'November',
+//     'December',
+//   ];
+
+//   const finalMonths = {
+//     January: 0,
+//     February: 0,
+//     March: 0,
+//     April: 0,
+//     May: 0,
+//     June: 0,
+//     July: 0,
+//     August: 0,
+//     September: 0,
+//     October: 0,
+//     November: 0,
+//     December: 0,
+//   };
+
+//   const monthlyWisePayments = allPayments.items.map((payment) => {
+//     // We are using payment.start_at which is in unix time, so we are converting it to Human readable format using Date()
+//     const monthsInNumbers = new Date(payment.start_at * 1000);
+
+//     return monthNames[monthsInNumbers.getMonth()];
+//   });
+
+//   monthlyWisePayments.map((month) => {
+//     Object.keys(finalMonths).forEach((objMonth) => {
+//       if (month === objMonth) {
+//         finalMonths[month] += 1;
+//       }
+//     });
+//   });
+
+//   const monthlySalesRecord = [];
+
+//   Object.keys(finalMonths).forEach((monthName) => {
+//     monthlySalesRecord.push(finalMonths[monthName]);
+//   });
+
+//   res.status(200).json({
+//     success: true,
+//     message: 'All payments',
+//     allPayments,
+//     finalMonths,
+//     monthlySalesRecord,
+//   });
+// };
 export {
   getRazorpayApiKey,
   buySubscription,
@@ -194,3 +359,35 @@ export {
   cancelSubscription,
   allPayments,
 };
+
+// const buySubscription = async (req, res, next) => {
+//   try {
+//     const { id } = req.user;
+//     const user = await User.findById(id);
+//     if (!user) {
+//       return next(new AppError("unauthenticated, please login again.", 403));
+//     }
+
+//     if (user.role === "ADMIN") {
+//       return next(new AppError("Admin can't buy courses", 403));
+//     }
+
+//     const subscription = await razorpay.subscriptions.create({
+//       plan_id: process.env.RAZORPAY_PLAN_ID,
+//       costumer_notify: 1,
+//     });
+
+//     user.subscription.id = subscription.id;
+//     user.subscription.status = subscription.status;
+
+//     await user.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "user subscribed successfully!",
+//       subscription_id: subscription.id,
+//     });
+//   } catch (error) {
+//     return next(new AppError(error.message, 500));
+//   }
+// };
