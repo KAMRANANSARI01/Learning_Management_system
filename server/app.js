@@ -17,7 +17,7 @@ app.use(express.urlencoded({extended:true}))//its used to get qury param from en
 //     Credential:true
 // }))
 app.use(cors({
-    origin: 'http://localhost:5173', // Specify the allowed origin directly
+    origin: 'https://lms-kamran-frontent.vercel.app/', // Specify the allowed origin directly
     credentials: true,
   }));
 app.use(cookieParser())
