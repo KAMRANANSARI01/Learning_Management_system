@@ -9,13 +9,13 @@ import mainImg from "../assets/aboutMainImage.png";
 const AboutPage = () => {
   return (
     <HomeLayout>
-      <div className="flex  bg-red-500 flex-col lg:h-[90%]  w-full items-center justify-between m-auto  sm:pt-20 text-white ">
-        <div className="flex h-[50%]  bg-slate-600 items-center justify-between  m-auto">
-          <section className="  h-[100%]  bg-yellow-300 flex  flex-col    justify-center space-y-12 ">
-            <h1 className=" text-5xl font-semibold text-yellow-500">
+      <div className="flex flex-col  lg:h-[90%]  w-full items-center justify-between m-auto  sm:pt-20 text-white ">
+        <div className="flex flex-col sm:flex-row  sm:h-[90%] h-[50%] my-12  items-center justify-between ">
+          <section className="  h-[50%]   flex sm:w-[60%] md:w-[50%] flex-col  w-[90%]  md:px-16 sm:px-10 justify-center space-y-12 ">
+            <h1 className=" md:text-5xl text-3xl text-center sm:text-start mt-12 font-semibold text-yellow-500">
               Affordable and quality education
             </h1>
-            <p className="text-xl text-grey-200 tracking-wide  ">
+            <p className="sm:text-2xl text-lg text-grey-200 tracking-wide  ">
               Our goal is to provide the affordable and quality education to the
               world. We are providing the platform for aspiring teacher and
               student to share their skills, creativity , knowledge to each
@@ -23,7 +23,7 @@ const AboutPage = () => {
               mankind.
             </p>
           </section>
-          <section className="w-[40%] bg-orange-400 h-[100%]  flex items-center flex-col justify-center">
+          <section className="sm:w-[40%] w-[70%]  h-[50%]  flex items-center flex-col justify-center">
             <img
               id="test1"
               style={{
@@ -36,7 +36,7 @@ const AboutPage = () => {
           </section>
         </div>
         {/* //adding carousel  */}
-        <div className="carousel  bg-green-300 w-[40%] m-auto   mb-3 ">
+        <div className="carousel  sm:w-[40%] w-[80%] m-auto   mb-3 ">
           {celebradtyData &&
             celebradtyData.map((celebraty) => (
               <CarouselSlide

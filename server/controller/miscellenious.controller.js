@@ -1,5 +1,6 @@
 import { sendEmail } from "../utils/sendEmail.utils.js";
 import AppError from "../utils/error.utils.js";
+import User from "../models/userSchema.js";
 
 // making contactUs form server
 
@@ -47,6 +48,26 @@ const contactUs = async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: 'Your request has been submitted successfully',
+  });
+};
+
+/**
+ * @USER_STATS_ADMIN
+ * @ROUTE @GET {{URL}}/api/v1/admin/stats/users
+ * @ACCESS Private(ADMIN ONLY)
+ */
+export const userStats = async (req, res, next) => {
+  const allUsersCount = await User.countDocuments();
+
+  const subscribedUsersCount = await User.countDocuments({
+    'subscription.status': 'active', // subscription.status means we are going inside an object and we have to put this in quotes
+  });
+
+  res.status(200).json({
+    success: true,
+    message: 'All registered users count',
+    allUsersCount,
+    subscribedUsersCount,
   });
 };
 

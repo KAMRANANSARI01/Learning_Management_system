@@ -160,60 +160,74 @@ const removeCourse = async function (req, res, next) {
 
 //*************adding lectures in course by admin*******************//
 
+
+
 const addLecturesToCourseById = async (req, res, next) => {
-  try {
-    const { title, description } = req.body;
-    if (!title || !description) {
-      return next(new AppError("All fields are required.", 403));
-    }
-    const { id } = req.params;
+  const { title, description } = req.body;
+  const { id } = req.params;
 
-    const course = await Course.findById(id);
-    if (!course) {
-      return next(new AppError("course not found related to this id", 403));
-    }
+  let lectureData = {};
 
-    const lectureData = {
-      title,
-      description,
-      lecture: {},
-    };
-
-    //for img/video upload
-
-    if (req.file) {
-      try {
-        const result = await cloudinary.v2.uploader.upload(req.file.path, {
-          folder: "lms",
-        });
-
-        if (result) {
-          lectureData.lecture.public_id = result.public_id;
-          lectureData.lecture.secure_url = result.secure_url;
-        }
-
-        fs.rm(`uploads/${req.file.filename}`);
-      } catch (error) {
-        console.log(error);
-        return next(new AppError("error.message", 403));
-      }
-    }
-
-    course.lectures.push(lectureData);
-
-    course.numbersOfLectures = course.lectures.length;
-
-    await course.save();
-
-    res.status(200).json({
-      success: true,
-      message: "lectures added successfully",
-      course,
-    });
-  } catch (error) {
-    console.log(error);
-    return next(new AppError("error.message", 403));
+  if (!title || !description) {
+    return next(new AppError('Title and Description are required', 400));
   }
+
+  const course = await Course.findById(id);
+
+  if (!course) {
+    return next(new AppError('Invalid course id or course not found.', 400));
+  }
+
+  // Run only if user sends a file
+  if (req.file) {
+    try {
+      const result = await cloudinary.v2.uploader.upload(req.file.path, {
+        folder: 'lms', // Save files in a folder named lms
+        chunk_size: 50000000, // 50 mb size
+        resource_type: 'video',
+      });
+
+      // If success
+      if (result) {
+        // Set the public_id and secure_url in array
+        lectureData.public_id = result.public_id;
+        lectureData.secure_url = result.secure_url;
+      }
+
+      // After successful upload remove the file from local storage
+      fs.rm(`uploads/${req.file.filename}`);
+    } catch (error) {
+      // Empty the uploads directory without deleting the uploads directory
+      for (const file of await fs.readdir('uploads/')) {
+        await fs.unlink(path.join('uploads/', file));
+      }
+
+      // Send the error message
+      return next(
+        new AppError(
+          JSON.stringify(error) || 'File not uploaded, please try again',
+          400
+        )
+      );
+    }
+  }
+
+  course.lectures.push({
+    title,
+    description,
+    lecture: lectureData,
+  });
+
+  course.numbersOfLectures = course.lectures.length;
+
+  // Save the course object
+  await course.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Course lecture added successfully',
+    course,
+  });
 };
 
 //*************removing lectures in course by admin*******************//
