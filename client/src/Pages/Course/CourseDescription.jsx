@@ -30,7 +30,7 @@ const CourseDescription = () => {
                   <span className="text-yellow-500 font-bold">
                     Total Lectures : 
                   </span>
-                  {state.numberOfLectures}
+                  {state.numbersOfLectures}
                 </p>
                 <p className="font-semibold">
                   <span className="text-yellow-500 font-bold">Instructor : </span>
@@ -39,10 +39,10 @@ const CourseDescription = () => {
               </div>
 
               {/* adding the subscribe button */}
-              {role === "ADMIN" || data?.subscription?.status === "ACTIVE" ? (
+              {role === "ADMIN" || data?.subscription?.status === "active" ? (
                 <button
                   onClick={() =>
-                    navigate("/course/displaylectures", { state: { ...state } })
+                    navigate("/course/lecture", { state: { ...state } })
                   }
                   className="bg-yellow-600 text-xl rounded-md font-bold px-5 py-3 w-full hover:bg-yellow-500 transition-all ease-in-out duration-300"
                 >

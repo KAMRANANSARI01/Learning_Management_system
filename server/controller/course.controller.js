@@ -35,7 +35,7 @@ const getLecturesByCourseId = async function (req, res, next) {
     res.status(200).json({
       success: true,
       message: " course lectured are fetched successfully",
-      lecture: course.lectures,
+      lectures: course.lectures,
     });
   } catch (error) {
     console.log(error);
@@ -268,7 +268,7 @@ const addLecturesToCourseById = async (req, res, next) => {
   course.lectures.splice(lectureIndex, 1);
 
   // update the number of lectures based on lectres array length
-  course.numberOfLectures = course.lectures.length;
+  course.numbersOfLectures = course.lectures.length;
 
   // Save the course object
   await course.save();

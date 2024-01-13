@@ -5,9 +5,8 @@ import {
   getAllCourses,
   getLecturesByCourseId,
   removeCourse,
-  removeCourseLecture,
+  removeLectureFromCourse,
   updateCourse,
-  removeLectureFromCourse
 } from "../controller/course.controller.js";
 import {
   authorizeSubscriber,
@@ -26,7 +25,8 @@ router
     authorizedRole("ADMIN"),
     upload.single("thumbnail"),
     createCourse
-  ); //for admin to create course
+  )
+  .delete(isLoggedIn, authorizedRole('ADMIN'), removeLectureFromCourse); //for admin to create course
 
 router
   .route("/:id")
@@ -39,6 +39,5 @@ router
     upload.single("lecture"),
     addLecturesToCourseById
   ) //for adding lectures in course by admin
-  .delete(isLoggedIn, authorizedRole("ADMIN"), removeCourseLecture); //now this is not working have to fix it.
 
 export default router;
