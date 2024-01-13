@@ -218,26 +218,66 @@ const addLecturesToCourseById = async (req, res, next) => {
 
 //*************removing lectures in course by admin*******************//
 
-const removeCourseLecture = async (req, res, next) => {
-  try {
-    const {id} = req.params;
-    const course = await Course.findById(id);
-    if (!course) {
-      return next(new AppError("course not found related to this id", 403));
-    }
-    lectureId = await course.lectures.id;
-    await Course.findByIdAndDelete(lectureId)
+/**
+ * @Remove_LECTURE
+ * @ROUTE @DELETE {{URL}}/api/v1/course/:courseId/lectures/:lectureId
+ * @ACCESS Private (Admin only)
+ */
+ const removeLectureFromCourse = async (req, res, next) => {
+  // Grabbing the courseId and lectureId from req.query
+  const { courseId, lectureId } = req.query;
 
-    await course.save()
-    res.status(200).json({
-      success: true,
-      message: "lectures deleted successfully",
-      course,
-    });
-  } catch (error) {
-    console.log(error);
-    return next(new AppError("error.message", 403));
+  console.log(courseId);
+
+  // Checking if both courseId and lectureId are present
+  if (!courseId) {
+    return next(new AppError('Course ID is required', 400));
   }
+
+  if (!lectureId) {
+    return next(new AppError('Lecture ID is required', 400));
+  }
+
+  // Find the course uding the courseId
+  const course = await Course.findById(courseId);
+
+  // If no course send custom message
+  if (!course) {
+    return next(new AppError('Invalid ID or Course does not exist.', 404));
+  }
+
+  // Find the index of the lecture using the lectureId
+  const lectureIndex = course.lectures.findIndex(
+    (lecture) => lecture._id.toString() === lectureId.toString()
+  );
+
+  // If returned index is -1 then send error as mentioned below
+  if (lectureIndex === -1) {
+    return next(new AppError('Lecture does not exist.', 404));
+  }
+
+  // Delete the lecture from cloudinary
+  await cloudinary.v2.uploader.destroy(
+    course.lectures[lectureIndex].lecture.public_id,
+    {
+      resource_type: 'video',
+    }
+  );
+
+  // Remove the lecture from the array
+  course.lectures.splice(lectureIndex, 1);
+
+  // update the number of lectures based on lectres array length
+  course.numberOfLectures = course.lectures.length;
+
+  // Save the course object
+  await course.save();
+
+  // Return response
+  res.status(200).json({
+    success: true,
+    message: 'Course lecture removed successfully',
+  });
 };
 
 export {
@@ -247,5 +287,5 @@ export {
   updateCourse,
   removeCourse,
   addLecturesToCourseById,
-  removeCourseLecture,
+  removeLectureFromCourse,
 };

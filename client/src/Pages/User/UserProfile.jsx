@@ -65,7 +65,7 @@ const UserProfile = () => {
             </Link>
           </div>
 
-          {userData?.subscription?.status === "active" && (
+          {userData?.subscription?.status === "activee" && (
             <button
               // onClick={handleCourseCancelSubscription}//this button is not working have to fix it
               className="w-full bg-red-600 hover:bg-red-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold cursor-pointer text-center"

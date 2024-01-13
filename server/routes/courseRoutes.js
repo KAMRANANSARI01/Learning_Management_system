@@ -7,6 +7,7 @@ import {
   removeCourse,
   removeCourseLecture,
   updateCourse,
+  removeLectureFromCourse
 } from "../controller/course.controller.js";
 import {
   authorizeSubscriber,
