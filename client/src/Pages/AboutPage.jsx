@@ -1,10 +1,10 @@
 import React from "react";
 
 import HomeLayout from "../Layouts/HomeLayout";
-import CarouselSlide from "../Component/carouselSlide";
 import { celebradtyData } from "../Constant/CelebratyData";
 
 import mainImg from "../assets/aboutMainImage.png";
+import CarouselSlide from "../Component/CarouselSlide.jsx";
 
 const AboutPage = () => {
   return (
