@@ -17,14 +17,14 @@ app.use(express.urlencoded({extended:true}))//its used to get qury param from en
 //     Credential:true
 // }))
 app.use(cors({
-    origin: 'https://lms-kamran-frontent.vercel.app/', // Specify the allowed origin directly
+    origin: 'http://localhost:5173', // Specify the allowed origin directly
     credentials: true,
   }));
 app.use(cookieParser())
 app.use(morgan('dev'))
 // Server Status Check Route
-app.get('/', (req, res) => {
-    res.send('hello');
+app.get('/', (_req, res) => {
+    res.send('Pong');
   });
 app.use("/api/v1/user",userRoutes)//for user homePage
 app.use("/api/v1/course",courseRoutes)//for course homepage

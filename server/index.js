@@ -21,7 +21,7 @@ export const razorpay = new Razorpay({
 
 const PORT = process.env.PORT || "http://localhost:5040";
 
-app.listen(5050, async () => {
+app.listen(PORT, async () => {
   await connectionToDb();
   console.log(`this server is listning on http://localhost:${PORT}`);
 });
