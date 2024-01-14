@@ -23,8 +23,8 @@ app.use(cors({
 app.use(cookieParser())
 app.use(morgan('dev'))
 // Server Status Check Route
-app.get('/ping', (_req, res) => {
-    res.send('Pong');
+app.get('/', (req, res) => {
+    res.send('hello');
   });
 app.use("/api/v1/user",userRoutes)//for user homePage
 app.use("/api/v1/course",courseRoutes)//for course homepage
