@@ -9,6 +9,7 @@ import paymentRoutes from './routes/paymentRoutes.js'
 import miscRoutes from './routes/miscelleneousRoutes.js'
 import errorMiddleware from "./middleware/error.middleware.js";
 config();
+
 const app = express();
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))//its used to get qury param from encoded or encripted url.
@@ -23,7 +24,7 @@ app.use(cors({
 app.use(cookieParser())
 app.use(morgan('dev'))
 // Server Status Check Route
-app.get('/', (_req, res) => {
+app.get('/ping', (_req, res) => {
     res.send('Pong');
   });
 app.use("/api/v1/user",userRoutes)//for user homePage
