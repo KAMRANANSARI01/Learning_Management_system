@@ -5,11 +5,11 @@ import toast from "react-hot-toast";
 const initialState = {
   isLoggedIn: localStorage.getItem("isLoggedIn") || false,
   role: localStorage.getItem("role") || "",
-  // data: localStorage.getItem("data") || {},
-  data:
-    localStorage.getItem("data") !== undefined
-      ? JSON.parse(localStorage.getItem("data"))
-      : {},
+  data: localStorage.getItem("data") || {},
+  // data:
+  //   localStorage.getItem("data") !== undefined
+  //     ? JSON.parse(localStorage.getItem("data"))
+  //     : {},
 };
 
 
@@ -44,7 +44,7 @@ export const login = createAsyncThunk("/auth/login", async (data) => {
 
 export const loggedout = createAsyncThunk("auth/logout", async () => {
   try {
-    let res = axiosInstance.post("user/logout");
+    let res = axiosInstance.get("user/logout");
     toast.promise(res, {
       loading: "Wait! Log out in progress....",
       success: (data) => {

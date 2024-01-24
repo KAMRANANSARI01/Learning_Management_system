@@ -56,7 +56,7 @@ const contactUs = async (req, res, next) => {
  * @ROUTE @GET {{URL}}/api/v1/admin/stats/users
  * @ACCESS Private(ADMIN ONLY)
  */
-export const userStats = async (req, res, next) => {
+ const userStats = async (req, res, next) => {
   const allUsersCount = await User.countDocuments();
 
   const subscribedUsersCount = await User.countDocuments({
@@ -72,7 +72,8 @@ export const userStats = async (req, res, next) => {
 };
 
 export {
-    contactUs
+    contactUs, 
+    userStats
 }
 
 

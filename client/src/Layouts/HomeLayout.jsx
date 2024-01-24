@@ -32,9 +32,7 @@ function HomeLayout({ children }) {
     e.preventDefault();
     const res = await dispatch(loggedout());
     console.log(res)
-    if (res?.payload?.success) {
-      navigate("/");
-    }
+    if (res?.payload?.success)navigate("/");
   }
   // async function handleLogout(e) {
   //   e.preventDefault();

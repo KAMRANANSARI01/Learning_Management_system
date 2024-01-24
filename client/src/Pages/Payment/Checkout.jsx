@@ -22,14 +22,56 @@ const Checkout = () => {
     razorpay_signature: "",
   };
 
+  // const handleSubscription = async (event) => {
+  //   event.preventDefault();
+
+  //   // checking for empty payment credential
+  //   if (!razorPayKey || !subscription_id) {
+  //     return;
+  //   }
+
+  //   const options = {
+  //     key: razorPayKey,
+  //     subscription_id: subscription_id,
+  //     name: "Coursify Pvt. Ltd.",
+  //     description: "Monthly Subscription",
+  //     handler: async function (response) {
+  //       paymentDetails.razorpay_payment_id = response.razorpay_payment_id;
+  //       paymentDetails.razorpay_subscription_id =
+  //         response.razorpay_subscription_id;
+  //       paymentDetails.razorpay_signature = response.razorpay_signature;
+
+  //       // displaying the success message
+  //       toast.success("Payment Successfull");
+
+  //       // verifying the payment
+  //       const res = await dispatch(verifyUserPayment(paymentDetails));
+  //       console.log(res)
+  //       // redirecting the user according to the verification status
+  //         res?.payload?.success
+  //         ? navigate("/checkout/success")
+  //         : navigate("/checkout/fail");
+  //     },
+  //     prefill: {
+  //       name: userData.fullName,
+  //       email: userData.email,
+  //     },
+  //     theme: {
+  //       color: "#F37254",
+  //     },
+  //   };
+  //   const paymentObject = new window.Razorpay(options);
+  //   paymentObject.open();
+  // };
+
   const handleSubscription = async (event) => {
     event.preventDefault();
-
+  
     // checking for empty payment credential
     if (!razorPayKey || !subscription_id) {
       return;
     }
-
+  
     const options = {
       key: razorPayKey,
       subscription_id: subscription_id,
@@ -37,20 +79,25 @@ const Checkout = () => {
       description: "Monthly Subscription",
       handler: async function (response) {
         paymentDetails.razorpay_payment_id = response.razorpay_payment_id;
-        paymentDetails.razorpay_subscription_id =
-          response.razorpay_subscription_id;
+        paymentDetails.razorpay_subscription_id = response.razorpay_subscription_id;
         paymentDetails.razorpay_signature = response.razorpay_signature;
-
+  
         // displaying the success message
         toast.success("Payment Successfull");
-
+  
         // verifying the payment
-        const res = await dispatch(verifyUserPayment(paymentDetails));
-        console.log(res)
-        // redirecting the user according to the verification status
+        try {
+          const res = await dispatch(verifyUserPayment(paymentDetails));
+          console.log("Verification Response:", res);
+          
+          // redirecting the user according to the verification status
           res?.payload?.success
-          ? navigate("/checkout/success")
-          : navigate("/checkout/fail");
+            ? navigate("/checkout/success")
+            : navigate("/checkout/fail");
+        } catch (error) {
+          console.error("Error during payment verification:", error);
+          // Handle error or show an error message to the user
+        }
       },
       prefill: {
         name: userData.fullName,
@@ -60,9 +107,13 @@ const Checkout = () => {
         color: "#F37254",
       },
     };
+  
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
+
+
+
 
   useEffect(() => {
     (async () => {
